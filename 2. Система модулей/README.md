@@ -1,3 +1,15 @@
+# Оглавление
+
++ [Немного истории](#немного-истории)
++ [Паттерны](#паттерны)
++ [CommonJS](#commonjs)
+  + [module.exports VS exports](#moduleexports-vs-exports)
+  + [Require - синхронный](#require---синхронный)
+  + [Resolving algorithm](#resolving-algorithm)
+  + [Module definition patterns](#module-definitions-patterns)
++ [ES Modules](#es-modules)
+  + [Как использовать в проекте?](#как-использовать-в-проекте)
+
 # Немного истории
 
 + В отличие от других платформ первоначально в JavaScript не было модульной системы
@@ -64,3 +76,110 @@ module.exports = () => {} // но module.exports так может
 + Вызов `require('debA')` в `node/modules/depC` загрузит зависимость из `node_modules/debC/node_modules/debA`
 
 Благодаря алгоритму разрешения зависимостей, модули получат свои собственные версии зависимостей!
+
+## Module definitions patterns
+
+### Named exports
+
+`logger.js`
+```javascript
+exports.info = (message) => {
+  console.log(`info: ${message}`);
+}
+
+exports.error = (message) => {
+  console.log(`error: ${message}`);
+}
+```
+
+`index.js`
+```javascript
+const logger = require('./logger')
+
+logger.info('this is info')
+logger.error('this is error')
+```
+
+### Exporting a function
+
+`logger.js`
+```javascript
+module.exports = (message) => {
+  console.log(message);
+}
+```
+
+`index.js`
+```javascript
+const logger = require('./logger')
+logger('my message')
+```
+
+### Exporting a class
+
+`logger.js`
+```javascript
+class Logger {
+  info(message) {
+    console.log(`info: ${message}`)
+  }
+  
+  error(message) {
+    console.log(`error: ${message}`)
+  }
+}
+
+module.exports = Logger;
+```
+
+`index.js`
+```javascript
+const Logger = require('./logger')
+const logger = new Logger();
+logger.info('info');
+```
+
+### Exporting an instance
+
++ Зачастую это считается реализаций паттерна **singleton**, однако, подобная реализация не дает гарантии, что будет создан исключительно один экземпляр из-за алгоритма разрешения модулей (описан выше)
+
+`logger.js`
+```javascript
+class Logger {
+  ...
+}
+
+module.exports = new Logger();
+```
+
+`index.js`
+```javascript
+const logger = require('./logger')
+logger.info()
+```
+
+### Monkey patching
+
++ Является очень плохой практикой
+
+`pather.js`
+```javascript
+require('./logger').customMessage = () => { ... }
+```
+
+`index.js`
+```javascript
+require('./patcher')
+const logger = require('./logger')
+logger.customMessage('...')
+```
+
+# ES Modules
+
+## Как использовать в проекте?
+
+По умолчанию Node.js считает, что все файлы `.js` используют **CommonJS**, поэтому если попытаться использовать **ESM**, то Node.js выдаст ошибку
+
+Следующими способами можно использовать **ESM** модули в проекте:
++ Использовать `.mjs`
++ В `package.json` прописать `"type": "module"` 
