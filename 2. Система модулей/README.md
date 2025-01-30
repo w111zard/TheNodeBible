@@ -10,3 +10,24 @@
 + Существует множество паттернов для системы модулей
 + Самый простой паттерн - **Revialing Module Pattern** представлен в [файле](1-revealing-module-pattern.js)
 + Собственная реализация **CommonJS** модулей представлена в [файле](2-my-require.js) 
+
+# module.exports VS exports
+
+При создании модуля создается объект:
+
+```javascript
+const module = {
+  exports: {},
+  ...
+}
+```
+
+**exports** - это просто ссылка на **module.exports**
+
+Если мы захотим переобъявить **exports**, то она перестанет ссылаться на объект **module**, что сделает ее использование бессмысленным
+
+```javascript
+exports = () => {} // уже не будет иметь смысла
+
+module.exports = () => {} // но module.exports так может
+```
