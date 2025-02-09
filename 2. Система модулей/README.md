@@ -9,6 +9,11 @@
   + [Module definition patterns](#module-definitions-patterns)
 + [ES Modules](#es-modules)
   + [Как использовать в проекте?](#как-использовать-в-проекте)
+  + [Виды импортов/экспортов](#виды-импортовэкспортов)
+  + [Named exports and imports](#named-exports-and-imports)
+  + [Default exports and imports](#default-exports-and-imports)
+  + [Mixed Imports](#mixed-exports)
+  + [named vs default](#named-vs-default)
 
 # Немного истории
 
