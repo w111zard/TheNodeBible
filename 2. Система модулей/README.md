@@ -180,6 +180,97 @@ logger.customMessage('...')
 
 По умолчанию Node.js считает, что все файлы `.js` используют **CommonJS**, поэтому если попытаться использовать **ESM**, то Node.js выдаст ошибку
 
-Следующими способами можно использовать **ESM** модули в проекте:
+Следующим способами можно использовать **ESM** модули в проекте:
 + Использовать `.mjs`
 + В `package.json` прописать `"type": "module"` 
+
+## Виды импортов/экспортов
+
+Существуют следующие виды экспортов/импортов:
++ Named exports/import - именованные экспорты/импорты
++ Default exports/import - экспорты/импорты по умолчанию (лучше это вообще не переводить на русский)
+
+## Named exports and imports
+
+```javascript
+// logger.js
+
+export function log(msg) {
+  console.log(msg);
+}
+
+export class Logger {
+  // ...
+}
+```
+
+```javascript
+// index.js
+
+import * from './logger.js' // Ошибка! Мы должны использовать 'as'
+import * as loggerModule from './logger.js' // импорт всего модуля
+import { log } from './logger.js' // иморт только одной функции
+import { log as myLog } from './logger.js' // импорт одной функции и переименовывание ее
+```
+
+## Default exports and imports
+
+```javascript
+// logger.js
+
+export default class Logger {
+  // ...
+}
+```
+
+```javascript
+import MyLogger from './logger.js' // можем назвать класс как угодно
+
+const logger = new MyLogger()
+```
+
+Мы также можем сделать так:
+
+```javascript
+import * as MyModule from './logger.js'
+
+console.log(MyModule) // [Module] { default: [Function: Logger] }
+```
+
+Но мы не можем сделать так:
+
+```javascript
+import { default } from './logger.js' // Ошибка! Syntax Error: Unexpected reserved word
+import { default as MyLogger} from './logger.js' // ок, но зачем???
+```
+
+**default** не может быть именем переменной
+
+## Mixed Exports
+
+Мы можем одновременно использовать default и named export/import
+
+```javascript
+// logger.js
+
+export default class Logger { 
+  // ... 
+}
+
+export function log() { 
+  // ...
+}
+```
+
+```javascript
+// index.js
+import MyLogger, { log } from './logger.js'
+```
+
+## named vs default
+
++ При named exports/imports IDE будет легче делать автоматические импорты, автокомплиты и рефакторинг. Например, мы пишим writeFile и IDE уже знает, что это метод из модуля fs и автоматически импортирует его `import { writeFile } from 'fs'`. С default imports/exports все гораздо сложнее
++ При default exports/imports пользователю не нужно знать какой конкретно метод импортировать, что делает использование модуля удобнее
++ При default exports/imports сложнее использовать [tree shaking](https://developer.mozilla.org/en-US/docs/Glossary/Tree_shaking) (dead code elimination) 
+
+Книга Node.js Design Patterns советует использовать named exports, особенно если необходимо экспортировать несколько функциональностей, и использовать default exports только когда экспортируется одна функциональность
