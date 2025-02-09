@@ -76,9 +76,9 @@ module.exports = () => {} // но module.exports так может
 **depB** и **depC** зависят от **depA**, но для каждой этой зависимости есть своя копия **depA**, во избежание
 **dependency hell** 
 
-+ Вызов `require('debA')` в `app.js` загрузит зависимость из `node_modules/debA`
-+ Вызов `require('debA')` в `node/modules/depB` загрузит зависимость из `node_modules/debB/node_modules/debA`
-+ Вызов `require('debA')` в `node/modules/depC` загрузит зависимость из `node_modules/debC/node_modules/debA`
++ Вызов `require('depA')` в `app.js` загрузит зависимость из `node_modules/depA`
++ Вызов `require('depA')` в `node/modules/depB` загрузит зависимость из `node_modules/depB/node_modules/debA`
++ Вызов `require('depA')` в `node/modules/depC` загрузит зависимость из `node_modules/depC/node_modules/debA`
 
 Благодаря алгоритму разрешения зависимостей, модули получат свои собственные версии зависимостей!
 
