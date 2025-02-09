@@ -14,6 +14,7 @@
   + [Default exports and imports](#default-exports-and-imports)
   + [Mixed Imports](#mixed-exports)
   + [named vs default](#named-vs-default)
+  + [Async imports](#async-imports)
 
 # Немного истории
 
@@ -279,3 +280,14 @@ import MyLogger, { log } from './logger.js'
 + При default exports/imports сложнее использовать [tree shaking](https://developer.mozilla.org/en-US/docs/Glossary/Tree_shaking) (dead code elimination) 
 
 Книга Node.js Design Patterns советует использовать named exports, особенно если необходимо экспортировать несколько функциональностей, и использовать default exports только когда экспортируется одна функциональность
+
+## Async imports
+
+**import** в ESM работает статично, его нельзя объявлять в операторах проверки условия. В некоторых ситуациях нужна возможность динамически импортировать модули в runtime. Поэтому ES модули предоставляют асинхронный импорт *async import* (dynamic import). Эту возможность реализует оператор `import()`
+
+Пример использования динамического импорта представлен в [файле](3-async-import.mjs). Программа выводит приветствие на различных языках, используя import для динамической загрузки модуля для выбранного языка. 
+
+```sh
+$ node 3-async-import.mjs ru
+$ Привет, Мир!
+```
